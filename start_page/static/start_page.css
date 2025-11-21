@@ -1,0 +1,21 @@
+/* Список ошибок под полем */
+.errorlist {
+    margin: 4px 0 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14px;
+    color: #b91c1c; /* красный, но можно любой */
+}
+
+/* Каждый пункт ошибки */
+.errorlist li {
+    margin: 0;
+}
+
+/* Подсветка поля с ошибкой */
+.field-error input,
+.field-error textarea,
+.field-error select {
+    border-color: #b91c1c;
+    outline: none;
+}

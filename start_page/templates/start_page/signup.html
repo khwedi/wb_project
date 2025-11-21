@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign up</title>
+    <link rel="stylesheet" href="{% static 'start_page/styles.css' %}">
+</head>
+<body>
+<h1>Регистрация</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="{% if form.username.errors %}field-error{% endif %}">
+        {{ form.username.label_tag }}
+        {{ form.username }}
+        {{ form.username.errors }}
+    </div>
+
+    <div class="{% if form.email.errors %}field-error{% endif %}">
+        {{ form.email.label_tag }}
+        {{ form.email }}
+        {{ form.email.errors }}
+    </div>
+
+    <div class="{% if form.password.errors %}field-error{% endif %}">
+        {{ form.password.label_tag }}
+        {{ form.password }}
+        {{ form.password.errors }}
+    </div>
+
+    <button type="submit">Sign up</button>
+</form>
+
+<p><a href="{% url 'start_page:start_page' %}">Назад на стартовую</a></p>
+</body>
+</html>

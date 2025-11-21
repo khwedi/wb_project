@@ -1,0 +1,20 @@
+# виртуальное окружение
+.venv/
+env/
+venv/
+
+# служебные файлы Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# база данных (если не хочешь её коммитить)
+db.sqlite3
+
+# IDE
+.idea/
+.vscode/
+
+# статика/медиа (по ситуации)
+staticfiles/
+media/
