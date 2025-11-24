@@ -4,20 +4,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sign up</title>
+    <title>Log in</title>
     <link rel="stylesheet" href="{% static 'start_page/styles.css' %}">
 </head>
 <body>
-<h1>Регистрация</h1>
+<h1>Авторизация</h1>
 
 <form method="post">
     {% csrf_token %}
-
-    <div class="{% if form.username.errors %}field-error{% endif %}">
-        {{ form.username.label_tag }}
-        {{ form.username }}
-        {{ form.username.errors }}
-    </div>
 
     <div class="{% if form.email.errors %}field-error{% endif %}">
         {{ form.email.label_tag }}
@@ -31,14 +25,22 @@
         {{ form.password.errors }}
     </div>
 
-    <button type="submit">Sign up</button>
+    {% if form.non_field_errors %}
+        <ul class="errorlist">
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <button type="submit">Log in</button>
 </form>
 
 <p>
-    Уже есть аккаунт?
-    <a href="{% url 'start_page:login_auth' %}">Войти</a>
+    Нет аккаунта?
+    <a href="{% url 'start_page:signup' %}">Зарегистрироваться</a>
 </p>
 
-<p><a href="{% url 'start_page:start_page' %}">Назад на стартовую</a></p>
+<p><a href="{% url 'start_page:start_page' %}">На стартовую</a></p>
 </body>
 </html>

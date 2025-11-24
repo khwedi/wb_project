@@ -12,7 +12,7 @@ from django.conf import settings
 import json
 import string
 
-from .forms import RegisterForm
+from .forms import *
 
 
 def start_page(request):
@@ -45,4 +45,22 @@ def signup(request):
             'allowed_domains': allowed_domains,
         },
     )
+
+
+def login_auth(request):
+    """
+    Авторизация:
+     - GET: показать форму
+    - POST: проверить данные, залогинить и отправить на main_page
+    """
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect("main_page:main_page")
+    else:
+        form = LoginForm()
+
+    return render(request, "start_page/login.html", {"form": form})
 
