@@ -9,17 +9,17 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
-import json
-import string
-
 from .forms import *
+from .services import *
 
 
 def start_page(request):
     """
-    Стартовая страница с двумя кнопками: Sign up и Log in.
+    Стартовая страница.
+    Проверку/продление сессий делает middleware,
+    поэтому тут достаточно просто отрендерить шаблон.
     """
-    return render(request, 'start_page/start_page.html')
+    return render(request, "start_page/start_page.html")
 
 
 def signup(request):
@@ -35,6 +35,7 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            create_or_update_user_session(request, user, create_if_missing=True)
             return redirect('main_page:main_page')
     else:
         form = RegisterForm()
@@ -58,9 +59,24 @@ def login_auth(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            create_or_update_user_session(request, user, create_if_missing=True)
             return redirect("main_page:main_page")
     else:
         form = LoginForm()
 
     return render(request, "start_page/login.html", {"form": form})
+
+
+def logout_auth(request):
+    """
+    Logout:
+    - завершаем все активные сессии пользователя
+    - вылогиниваем через Django
+    - возвращаем на стартовую страницу
+    """
+    if request.user.is_authenticated:
+        end_user_sessions(request.user)
+        logout(request)
+
+    return redirect("start_page:start_page")
 

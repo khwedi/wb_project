@@ -47,6 +47,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'start_page.middleware.UserSessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -135,4 +136,10 @@ ALLOWED_EMAIL_DOMAINS = [
     "yandex.ru",
     "mail.ru"
 ]
+
+# сессия живёт 24 часа
+SESSION_COOKIE_AGE = 60 * 60 * 24
+
+# продлевать срок действия сессии при каждом запросе
+SESSION_SAVE_EVERY_REQUEST = True
 

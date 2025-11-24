@@ -5,12 +5,20 @@
     <title>Start page</title>
 </head>
 <body>
-    <h1>Start page</h1>
-    <p>
-        <a href="{% url 'start_page:signup' %}">Sign up</a>
-    </p>
-    <p>
-        <a href="{% url 'start_page:login_auth' %}">Log in</a>
-    </p>
+<h1>Start page</h1>
+
+{% if request.user.is_authenticated %}
+    <div class="user-menu">
+        <span class="user-name">{{ request.user.username }}</span>
+        <ul class="user-menu-dropdown">
+            <li><a href="{% url 'main_page:main_page' %}">Личный кабинет</a></li>
+            <li><a href="{% url 'start_page:logout_auth' %}">Logout</a></li>
+        </ul>
+    </div>
+{% else %}
+    <p><a href="{% url 'start_page:signup' %}">Sign up</a></p>
+    <p><a href="{% url 'start_page:login_auth' %}">Log in</a></p>
+{% endif %}
+
 </body>
 </html>

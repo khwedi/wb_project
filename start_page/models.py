@@ -53,3 +53,34 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class UserSession(models.Model):
+    """
+    Лог сессий пользователя:
+    - user: к какому пользователю относится
+    - session_key: ключ сессии Django
+    - start_time: когда сессия началась
+    - end_time: когда должна закончиться
+    - duration: длительность (end_time - start_time)
+    - is_active: флаг "активна ли сессия сейчас"
+    """
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="sessions",
+    )
+    session_key = models.CharField(max_length=40, db_index=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    duration = models.DurationField()
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-start_time"]
+
+    def __str__(self):
+        return f"Session {self.session_key} for {self.user.email}"
