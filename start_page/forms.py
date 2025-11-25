@@ -30,17 +30,17 @@ class RegisterForm(forms.ModelForm):
 
     def clean_email(self):
         """
-        Вызов нашей общей функции validate_email_address.
+        Вызов нашей общей функции validate_email_for_registration.
         """
-        email = self.cleaned_data.get("email")
-        return validate_email_address(email)
+        email = self.cleaned_data.get("email","")
+        return validate_email(email, type='signup')
 
 
     def clean_password(self):
         """
         Вызов нашей общей функции validate_password.
         """
-        password = self.cleaned_data.get("password")
+        password = self.cleaned_data.get("password","")
         return validate_password(password)
 
 
@@ -66,18 +66,10 @@ class LoginForm(forms.Form):
         widget=forms.PasswordInput(attrs={"placeholder": "Введите пароль"}),
     )
 
-    def clean_email(self):
-        email = self.cleaned_data.get("email", "")
-        email = email.strip()
-        if not email:
-            raise ValidationError("Укажите email.")
-
-        try:
-            django_validate_email(email)
-        except ValidationError:
-            raise ValidationError("Введите корректный email.")
-        return email
-
+    # def clean_email(self):
+    #     email = self.cleaned_data.get("email", "")
+    #     return validate_email(email, type='login')
+    #
     def clean_password(self):
         password = self.cleaned_data.get("password", "")
         password = password.strip()

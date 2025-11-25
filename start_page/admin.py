@@ -85,6 +85,14 @@ class UserSessionAdmin(admin.ModelAdmin):
     date_hierarchy = "start_time"
 
 
+class PasswordResetRequestInline(admin.TabularInline):
+    model = PasswordResetRequest
+    extra = 0
+    can_delete = False
+    readonly_fields = ("code", "created_at", "expires_at", "is_used")
+    fields = ("code", "created_at", "expires_at", "is_used")
+
+
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'email', 'username', 'is_staff', 'is_active', 'date_joined','password')
@@ -93,6 +101,18 @@ class CustomUserAdmin(admin.ModelAdmin):
     readonly_fields = ('email', 'password')
     list_filter = ('email', 'is_active', 'is_staff', 'date_joined')
 
-    inlines = [UserSessionInline]
+    inlines = [UserSessionInline, PasswordResetRequestInline]
+
+
+@admin.register(PasswordResetRequest)
+class PasswordResetRequestAdmin(admin.ModelAdmin):
+    list_display = ("user", "code", "created_at", "expires_at", "is_used")
+    list_filter = ("is_used", "created_at", "expires_at", "user")
+    search_fields = ("user__email", "user__username", "code")
+    readonly_fields = ("user", "code", "created_at", "expires_at", "is_used")
+
+    date_hierarchy = "created_at"
+
+
 
 

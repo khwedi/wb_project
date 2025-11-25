@@ -7,6 +7,30 @@ from .models import CustomUser
 import re
 
 
+def _normalize_email(email):
+    """
+    Общая нормализация email: обрезать пробелы, привести к нижнему регистру,
+    проверить формат.
+    """
+    if not email:
+        raise ValidationError("Укажите email.")
+
+    email_normalized = email.strip().lower()
+    try:
+        django_validate_email(email_normalized)
+    except ValidationError:
+        raise ValidationError("Введите корректный email.")
+    return email_normalized
+
+
+def _check_allowed_domain(email_normalized):
+    allowed_domains = getattr(settings, "ALLOWED_EMAIL_DOMAINS", [])
+    if allowed_domains:
+        domain = email_normalized.split("@")[-1]
+        if domain not in allowed_domains:
+            raise ValidationError("Регистрация/вход с этого домена email недоступны.")
+
+
 def validate_username(username):
     """
     Проверяем, что поле с именем пользователя не пустое
@@ -17,38 +41,23 @@ def validate_username(username):
     return username
 
 
-def validate_email_address(email):
+def validate_email(email, type):
     """
-    Комплексная проверка email:
+    Проверка email при регистрации:
     - не пустой
     - корректный формат
-    - домен входит в ALLOWED_EMAIL_DOMAINS
-    - такого email ещё нет в базе
-    Возвращает нормализованный email (strip + lower).
+    - домен из ALLOWED_EMAIL_DOMAINS (если задан)
+    - такого email ещё НЕТ в базе или ЕСТЬ в зависимости от действия
     """
-    # 1. Не пустой
-    if not email:
-        raise ValidationError("Укажите email.")
+    email_normalized = _normalize_email(email)
+    _check_allowed_domain(email_normalized)
 
-    # Сразу нормализуем
-    email_normalized = email.strip().lower()
-
-    # 2. Корректный формат
-    try:
-        django_validate_email(email_normalized)
-    except ValidationError:
-        raise ValidationError("Введите корректный email.")
-
-    # 3. Проверка домена
-    allowed_domains = getattr(settings, "ALLOWED_EMAIL_DOMAINS", [])
-    if allowed_domains:
-        domain = email_normalized.split("@")[-1]
-        if domain not in allowed_domains:
-            raise ValidationError("Регистрация с этого домена email недоступна.")
-
-    # 4. Проверка на уникальность
     if CustomUser.objects.filter(email__iexact=email_normalized).exists():
-        raise ValidationError("Пользователь с таким email уже зарегистрирован.")
+        if type == 'signup':
+            raise ValidationError("Пользователь с таким email уже зарегистрирован.")
+    else:
+        if type == 'login':
+            raise ValidationError("Пользователь с таким email не найден.")
 
     return email_normalized
 

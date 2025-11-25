@@ -143,3 +143,12 @@ SESSION_COOKIE_AGE = 60 * 60 * 24
 # продлевать срок действия сессии при каждом запросе
 SESSION_SAVE_EVERY_REQUEST = True
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'khwedi.ananieva@gmail.com'
+EMAIL_HOST_PASSWORD = 'apva wcmf avml uzfa'
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+

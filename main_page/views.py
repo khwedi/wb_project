@@ -10,6 +10,6 @@ def main_page(request):
     """
     Основная страница.
     Проверку и продление UserSession делает middleware.
-    Если сессия истекла, middleware разлогинит и отправит на start_page.
+    Если сессия истекла, middleware разлогинит и отправит на стартовую страницу.
     """
     return render(request, "main_page/main_page.html")

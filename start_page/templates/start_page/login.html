@@ -41,6 +41,14 @@
     <a href="{% url 'start_page:signup' %}">Зарегистрироваться</a>
 </p>
 
+<p>
+    Забыли пароль?
+    <button type="button" id="password-reset-btn">Сменить пароль</button>
+</p>
+
 <p><a href="{% url 'start_page:start_page' %}">На стартовую</a></p>
+
+{% include "start_page/password_reset_modals.html" %}
+
 </body>
 </html>

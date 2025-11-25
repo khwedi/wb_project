@@ -84,3 +84,33 @@ class UserSession(models.Model):
 
     def __str__(self):
         return f"Session {self.session_key} for {self.user.email}"
+
+
+class PasswordResetRequest(models.Model):
+    """
+    Запрос на сброс пароля:
+    - user: к какому пользователю относится
+    - code: шестизначный код
+    - created_at: когда был создан
+    - expires_at: до какого времени валиден
+    - is_used: был ли уже использован (после успешного сброса пароля)
+    """
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="password_reset_requests",
+    )
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Reset for {self.user.email} (code={self.code})"
+
+    @property
+    def is_expired(self):
+        return timezone.now() >= self.expires_at
