@@ -1,0 +1,78 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="{% static 'main_page/main_page.css' %}">
+    <link rel="stylesheet" href="{% static 'main_page/profile.css' %}">
+</head>
+<body>
+
+<div class="page-layout">
+    <main class="profile-details">
+        <h1>Профиль</h1>
+
+        <!-- Имя пользователя -->
+        <div class="profile-row">
+            <div class="profile-label">Имя пользователя</div>
+            <div class="profile-value">
+                <span id="username-display">{{ request.user.username }}</span>
+                <input
+                    type="text"
+                    id="username-input"
+                    class="profile-input"
+                    value="{{ request.user.username }}"
+                    style="display: none;"
+                >
+                <div id="username-error" class="profile-error"></div>
+            </div>
+            <div class="profile-actions">
+                <button type="button" class="btn" id="username-edit-btn">Изменить</button>
+                <button type="button" class="btn" id="username-save-btn" style="display: none;">Сохранить</button>
+                <button type="button" class="btn" id="username-cancel-btn" style="display: none;">Отмена</button>
+            </div>
+        </div>
+
+        <!-- Почта -->
+        <div class="profile-row">
+            <div class="profile-label">Почта</div>
+            <div class="profile-value">
+                <span id="email-masked">{{ masked_email }}</span>
+                <span id="email-full" style="display: none;">{{ full_email }}</span>
+            </div>
+            <div class="profile-actions">
+                <button type="button" class="btn" id="email-toggle-btn">Показать</button>
+                <button type="button" class="btn">Изменить</button>
+            </div>
+        </div>
+
+        <!-- Пароль -->
+        <div class="profile-row">
+            <div class="profile-label">Пароль</div>
+            <div class="profile-value">
+                ********
+            </div>
+            <div class="profile-actions">
+                <button type="button" class="btn">Изменить</button>
+            </div>
+        </div>
+
+        <!-- Кнопка назад на main_page -->
+        <div class="profile-row">
+            <div class="profile-label"></div>
+            <div class="profile-value">
+                <a href="{% url 'main_page:main_page' %}" class="btn">Назад на главную</a>
+            </div>
+            <div class="profile-actions"></div>
+        </div>
+
+    </main>
+</div>
+
+<input type="hidden" id="csrf-token" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+<script src="{% static 'main_page/profile.js' %}"></script>
+</body>
+</html>

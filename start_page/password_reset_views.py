@@ -4,8 +4,6 @@ from datetime import timedelta
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.core.exceptions import ValidationError
-from django.core.validators import validate_email as django_validate_email
-from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from django.utils import timezone
 

@@ -1,14 +1,28 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Main page</title>
+    <link rel="stylesheet" href="{% static 'main_page/main_page.css' %}">
 </head>
 <body>
-<h1>Main page</h1>
+<div class="top-bar">
+    <div class="user-menu" id="user-menu">
+        <span class="user-name" id="user-menu-toggle">{{ request.user.username }}</span>
+        <div class="user-menu-dropdown">
+            <a href="{% url 'main_page:profile' %}">Изменить профиль</a>
+            <a href="{% url 'start_page:logout_auth' %}">Logout</a>
+        </div>
+    </div>
+</div>
 
-<p>Регистрация прошла успешно. Здесь будет основная логика сайта.</p>
+<div class="main-content">
+    <h1>Главная страница</h1>
+    <p>Здесь потом будет основная логика приложения.</p>
+</div>
 
-<p><a href="{% url 'start_page:start_page' %}">На стартовую</a></p>
+<script src="{% static 'main_page/main_page.js' %}"></script>
 </body>
 </html>
