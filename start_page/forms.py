@@ -1,6 +1,5 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.validators import validate_email as django_validate_email
 
 from .validators import *
 from .validators import _normalize_email, _check_allowed_domain
@@ -30,9 +29,6 @@ class RegisterForm(forms.ModelForm):
 
 
     def clean_email(self):
-        """
-        Вызов нашей общей функции validate_email_for_registration.
-        """
         email = self.cleaned_data.get("email","")
         return validate_email(email, type='signup')
 
@@ -68,10 +64,8 @@ class LoginForm(forms.Form):
     )
 
     # def clean_email(self):
-    #     email_normalized = _normalize_email(self.cleaned_data.get("email", ""))
-    #     _check_allowed_domain(email_normalized)
-    #
-    #     return email_normalized
+    #     email = self.cleaned_data.get("email","")
+    #     return validate_email(email, type='login')
 
     def clean_password(self):
         password = self.cleaned_data.get("password", "")

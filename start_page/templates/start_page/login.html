@@ -1,27 +1,28 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Log in</title>
     <link rel="stylesheet" href="{% static 'start_page/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'start_page/email_code.css' %}">
 </head>
 <body>
 <h1>Авторизация</h1>
 
-<form method="post">
+<form method="post" id="login-form">
     {% csrf_token %}
 
     <div class="{% if form.email.errors %}field-error{% endif %}">
-        {{ form.email.label_tag }}
-        {{ form.email }}
+        {{ form.email.label_tag }}<br>
+        {{ form.email }}<br>
         {{ form.email.errors }}
     </div>
 
     <div class="{% if form.password.errors %}field-error{% endif %}">
-        {{ form.password.label_tag }}
-        {{ form.password }}
+        {{ form.password.label_tag }}<br>
+        {{ form.password }}<br>
         {{ form.password.errors }}
     </div>
 
@@ -48,7 +49,15 @@
 
 <p><a href="{% url 'start_page:start_page' %}">На стартовую</a></p>
 
-{% include "start_page/password_reset_modals.html" %}
+{# универсальные модалки email-кода #}
+{% include "start_page/email_code_modals.html" %}
 
+<script>
+    window.EC_CONFIG = {
+        mode: "password_reset",
+        triggerId: "password-reset-btn"
+    };
+</script>
+<script src="{% static 'start_page/email_code.js' %}"></script>
 </body>
 </html>

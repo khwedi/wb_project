@@ -1,10 +1,10 @@
-{% load static %}
+{# Универсальные модалки для всех сценариев (password_reset / signup / change_email) #}
 
-<!-- Модальное окно 1: ввод email -->
+<!-- Модалка 1: ввод email -->
 <div id="pr-modal-email" class="pr-modal" style="display: none;">
     <div class="pr-modal-content">
-        <h2>Восстановление пароля</h2>
-        <p>Введите email, с которым вы зарегистрированы.</p>
+        <h2>Подтверждение email</h2>
+        <p>Введите ваш email, на него будет отправлен код.</p>
         <form id="pr-email-form">
             {% csrf_token %}
             <input type="email" name="email" id="pr-email-input" placeholder="Email">
@@ -15,7 +15,7 @@
     </div>
 </div>
 
-<!-- Модальное окно 2: ввод кода -->
+<!-- Модалка 2: ввод кода -->
 <div id="pr-modal-code" class="pr-modal" style="display: none;">
     <div class="pr-modal-content">
         <h2>Введите код</h2>
@@ -35,28 +35,25 @@
     </div>
 </div>
 
-<!-- Модальное окно 3: новый пароль -->
+<!-- Модалка 3: пароль / текущий пароль -->
 <div id="pr-modal-password" class="pr-modal" style="display: none;">
     <div class="pr-modal-content">
-        <h2>Новый пароль</h2>
+        <h2 id="pr-password-title">Новый пароль</h2>
         <form id="pr-password-form">
             {% csrf_token %}
             <input type="password" name="password1" id="pr-password1" placeholder="Новый пароль">
             <input type="password" name="password2" id="pr-password2" placeholder="Повторите пароль">
             <div id="pr-password-error" class="pr-error"></div>
-            <button type="submit">Сохранить новый пароль</button>
+            <button type="submit">Сохранить</button>
             <button type="button" id="pr-password-cancel">Отмена</button>
         </form>
     </div>
 </div>
 
-<!-- Глобальный оверлей загрузки -->
+<!-- Оверлей загрузки -->
 <div id="pr-loading-overlay" class="pr-loading-overlay" style="display: none;">
     <div class="pr-loading-box">
         <div class="pr-spinner"></div>
         <div id="pr-loading-text" class="pr-loading-text">Отправляем код...</div>
     </div>
 </div>
-
-<link rel="stylesheet" href="{% static 'start_page/password_reset.css' %}">
-<script src="{% static 'start_page/password_reset.js' %}"></script>

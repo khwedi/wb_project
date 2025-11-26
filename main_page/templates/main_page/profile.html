@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,6 +6,7 @@
     <title>Профиль</title>
     <link rel="stylesheet" href="{% static 'main_page/main_page.css' %}">
     <link rel="stylesheet" href="{% static 'main_page/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'start_page/email_code.css' %}">
 </head>
 <body>
 
@@ -44,7 +44,7 @@
             </div>
             <div class="profile-actions">
                 <button type="button" class="btn" id="email-toggle-btn">Показать</button>
-                <button type="button" class="btn">Изменить</button>
+                <button type="button" class="btn" id="profile-email-change-btn">Изменить</button>
             </div>
         </div>
 
@@ -59,7 +59,7 @@
             </div>
         </div>
 
-        <!-- Кнопка назад на main_page -->
+        <!-- Назад на главную -->
         <div class="profile-row">
             <div class="profile-label"></div>
             <div class="profile-value">
@@ -71,8 +71,18 @@
     </main>
 </div>
 
-<input type="hidden" id="csrf-token" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<!-- csrf для AJAX -->
+<input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+
+{% include "start_page/email_code_modals.html" %}
 
 <script src="{% static 'main_page/profile.js' %}"></script>
+<script>
+    window.EC_CONFIG = {
+        mode: "change_email",
+        triggerId: "profile-email-change-btn"
+    };
+</script>
+<script src="{% static 'start_page/email_code.js' %}"></script>
 </body>
 </html>

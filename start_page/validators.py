@@ -43,26 +43,45 @@ def validate_username(username):
 
 def validate_email(email, type):
     """
-    Проверка email при регистрации:
+    Универсальная проверка email.
+
+    Общая часть:
     - не пустой
     - корректный формат
     - домен из ALLOWED_EMAIL_DOMAINS (если задан)
-    - такого email ещё НЕТ в базе или ЕСТЬ в зависимости от действия
+
+    В зависимости от type также проверяем наличие в базе:
+
+      type == 'signup':
+          email НЕ должен существовать
+          -> иначе: "Пользователь с таким email уже зарегистрирован."
+
+      type in ('login', 'password_reset'):
+          email ДОЛЖЕН существовать
+          -> иначе: "Пользователь с таким email не найден."
+
+      type is None:
+          только формат + домен, без проверки в базе
     """
     email_normalized = _normalize_email(email)
     _check_allowed_domain(email_normalized)
 
-    if CustomUser.objects.filter(email__iexact=email_normalized).exists():
-        if type == 'signup':
-            raise ValidationError("Пользователь с таким email уже зарегистрирован.")
-    else:
-        if type == 'login':
+    if type is None:
+        return email_normalized
+
+    exists = CustomUser.objects.filter(email__iexact=email_normalized).exists()
+
+    if type in ("login", "password_reset"):
+        if not exists:
             raise ValidationError("Пользователь с таким email не найден.")
+    elif type == "signup":
+        if exists:
+            raise ValidationError("Пользователь с таким email уже зарегистрирован.")
 
     return email_normalized
 
 
-def validate_password(password: str) -> str:
+def validate_password(password):
     """
     Проверка пароля по правилам:
     - не пустой

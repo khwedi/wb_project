@@ -1,33 +1,46 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Sign up</title>
     <link rel="stylesheet" href="{% static 'start_page/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'start_page/email_code.css' %}">
 </head>
 <body>
 <h1>Регистрация</h1>
 
-<form method="post">
+<form method="post" id="signup-form">
     {% csrf_token %}
 
     <div class="{% if form.username.errors %}field-error{% endif %}">
-        {{ form.username.label_tag }}
-        {{ form.username }}
+        {{ form.username.label_tag }}<br>
+        {{ form.username }}<br>
         {{ form.username.errors }}
     </div>
 
     <div class="{% if form.email.errors %}field-error{% endif %}">
-        {{ form.email.label_tag }}
+        {{ form.email.label_tag }}<br>
         {{ form.email }}
+        {# кнопка отправки кода на email #}
+        <button type="button" id="signup-email-verify-btn">Подтвердить email</button><br>
+
+        {# статус валидации email-кода #}
+        <span id="signup-email-status" class="email-status">
+            {% if email_verified %}
+                Email подтверждён ✔
+            {% else %}
+                Email не подтверждён
+            {% endif %}
+        </span><br>
+
         {{ form.email.errors }}
     </div>
 
     <div class="{% if form.password.errors %}field-error{% endif %}">
-        {{ form.password.label_tag }}
-        {{ form.password }}
+        {{ form.password.label_tag }}<br>
+        {{ form.password }}<br>
         {{ form.password.errors }}
     </div>
 
@@ -40,5 +53,18 @@
 </p>
 
 <p><a href="{% url 'start_page:start_page' %}">Назад на стартовую</a></p>
+
+{# универсальные модалки для всех сценариев (мы их переиспользуем) #}
+{% include "start_page/email_code_modals.html" %}
+
+<script>
+    window.EC_CONFIG = {
+        mode: "signup",
+        triggerId: "signup-email-verify-btn",
+        emailInputId: "id_email",
+        statusElementId: "signup-email-status"
+    };
+</script>
+<script src="{% static 'start_page/email_code.js' %}"></script>
 </body>
 </html>

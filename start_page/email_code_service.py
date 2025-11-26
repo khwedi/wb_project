@@ -1,5 +1,9 @@
+# start_page/email_code_service.py
 import random
+from typing import Tuple, Optional
+
 from django.utils import timezone
+
 
 EMAIL_CODE_MESSAGES = {
     "cooldown": "Слишком частые запросы кода. Попробуйте через {seconds} секунд.",
@@ -9,16 +13,39 @@ EMAIL_CODE_MESSAGES = {
 }
 
 
-def _generate_code():
-    return f"{random.randint(0, 999999):06d}"
-
-
-def _get_cooldown_seconds(attempts_so_far):
+def mask_email(email: str) -> str:
     """
-    0 → первая отправка (без задержки)
-    1 → между 1 и 2 → 30 секунд
-    2 → между 2 и 3 → 5 минут
-    ≥3 → 10 минут
+    Маскирует email для отображения.
+    Пример: diana.super@mail.ru -> dia******er@mail.ru
+    """
+    if not email or "@" not in email:
+        return email
+
+    local, domain = email.split("@", 1)
+    if len(local) <= 4:
+        visible_start = local[:1]
+        visible_end = local[-1:] if len(local) > 1 else ""
+    else:
+        visible_start = local[:3]
+        visible_end = local[-2:]
+
+    stars_count = max(len(local) - len(visible_start) - len(visible_end), 1)
+    masked_local = f"{visible_start}{'*' * stars_count}{visible_end}"
+    return f"{masked_local}@{domain}"
+
+
+def _generate_code() -> str:
+    """Генерирует 6-значный код в виде строки."""
+    return f"{random.randint(0, 999_999):06d}"
+
+
+def _get_cooldown_seconds(attempts_so_far: int) -> int:
+    """
+    Логика задержек между отправками:
+      0 -> первая отправка (без задержки)
+      1 -> между 1 и 2 -> 30 секунд
+      2 -> между 2 и 3 -> 5 минут
+      >=3 -> 10 минут
     """
     if attempts_so_far == 0:
         return 0
@@ -26,17 +53,24 @@ def _get_cooldown_seconds(attempts_so_far):
         return 30
     elif attempts_so_far == 2:
         return 300
-    else:
-        return 600
+    return 600
 
 
 def start_email_code_flow(request, prefix: str, email: str) -> dict:
     """
-    Общая логика для стартового шага:
-    - проверка cooldown по prefix (password_reset / signup_email / change_email)
-    - генерация кода
-    - сохранение кода и состояния в сессию
-    Возвращает dict, который дальше можно отдать через JsonResponse.
+    Общая логика "шаг 1": отправка кода на email.
+
+    В сессии хранится:
+      - {prefix}_attempts
+      - {prefix}_last_attempt_ts
+      - {prefix}_code
+      - {prefix}_expires_ts
+      - {prefix}_email
+      - {prefix}_verified (False)
+
+    Возврат:
+      - ok=False, code="cooldown", error, remaining_seconds
+      - ok=True, code_value, attempts, cooldown_seconds
     """
     now_ts = timezone.now().timestamp()
 
@@ -47,7 +81,7 @@ def start_email_code_flow(request, prefix: str, email: str) -> dict:
     email_key = f"{prefix}_email"
     verified_key = f"{prefix}_verified"
 
-    attempts = request.session.get(attempts_key, 0)
+    attempts = int(request.session.get(attempts_key, 0))
     last_ts = request.session.get(last_ts_key)
 
     if last_ts is not None:
@@ -84,10 +118,9 @@ def start_email_code_flow(request, prefix: str, email: str) -> dict:
     }
 
 
-def verify_email_code_flow(request, prefix, code_input):
+def verify_email_code_flow(request, prefix: str, code_input: str) -> dict:
     """
-    Общая логика шага проверки кода.
-    Работает только с сессией, никакой привязки к конкретному сценарию.
+    Общая логика "шаг 2": проверка кода.
     """
     code_key = f"{prefix}_code"
     expires_key = f"{prefix}_expires_ts"
@@ -122,10 +155,8 @@ def verify_email_code_flow(request, prefix, code_input):
     return {"ok": True}
 
 
-def get_verified_email(request, prefix: str) -> tuple[bool, str | None]:
-    """
-    Достаём из сессии: подтверждён ли код и какая почта была подтверждена.
-    """
+def get_verified_email(request, prefix: str) -> Tuple[bool, Optional[str]]:
+    """Возвращает (verified, email) из сессии для данного prefix."""
     email_key = f"{prefix}_email"
     verified_key = f"{prefix}_verified"
 
@@ -135,6 +166,7 @@ def get_verified_email(request, prefix: str) -> tuple[bool, str | None]:
 
 
 def clear_email_flow(request, prefix: str) -> None:
+    """Удаляет все ключи, связанные с email-flow для данного prefix."""
     for suffix in ("attempts", "last_attempt_ts", "code", "expires_ts", "email", "verified"):
         request.session.pop(f"{prefix}_{suffix}", None)
     request.session.modified = True
