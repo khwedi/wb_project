@@ -1,4 +1,3 @@
-# start_page/email_code_service.py
 import random
 from typing import Tuple, Optional
 

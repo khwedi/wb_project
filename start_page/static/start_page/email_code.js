@@ -8,6 +8,7 @@
     const triggerId = EC.triggerId || (mode === "password_reset" ? "password-reset-btn" : null);
     const emailSourceId = EC.emailInputId || null;
     const statusElementId = EC.statusElementId || null;
+    const passwordResetSuccessEl = document.getElementById("password-reset-success");
 
     const ENDPOINTS = {
         password_reset: {
@@ -199,6 +200,10 @@
         resetCodeStep();
         if (hasPasswordStep) {
             resetPasswordStep();
+        }
+
+        if (passwordResetSuccessEl && isPasswordReset) {
+            passwordResetSuccessEl.textContent = '';
         }
 
         if (emailSourceInput && emailInput) {
@@ -424,7 +429,10 @@
                         }
                         resetPasswordStep();
                         closeModal(passwordModal);
-                        alert("Пароль успешно изменён. Введите новый пароль в форму авторизации.");
+
+                        if (passwordResetSuccessEl) {
+                        passwordResetSuccessEl.textContent = "Пароль успешно изменён. Введите новый пароль и авторизуйтесь.";
+                        }
                     })
                     .catch(() => {
                         hideLoading();

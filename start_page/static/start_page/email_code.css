@@ -126,3 +126,9 @@
     font-size: 13px;
     color: #4b5563;
 }
+
+.success-message {
+    font-size: 13px;
+    color: #15803d; /* зелёный */
+}
+

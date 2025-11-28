@@ -78,3 +78,17 @@
     font-size: 12px;
     color: #b91c1c;
 }
+
+.password-edit-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.profile-success {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #15803d; /* зелёный */
+}
+

@@ -52,10 +52,37 @@
         <div class="profile-row">
             <div class="profile-label">Пароль</div>
             <div class="profile-value">
-                ********
+                <span id="password-placeholder">********</span>
+
+                <div id="password-edit-block" class="password-edit-block" style="display: none;">
+                    <input
+                        type="password"
+                        id="current-password-input"
+                        class="profile-input"
+                        placeholder="Текущий пароль"
+                    >
+                    <input
+                        type="password"
+                        id="new-password1-input"
+                        class="profile-input"
+                        placeholder="Новый пароль"
+                    >
+                    <input
+                        type="password"
+                        id="new-password2-input"
+                        class="profile-input"
+                        placeholder="Повторите новый пароль"
+                    >
+                    <div id="password-change-error" class="profile-error"></div>
+                </div>
+
+                <!-- Индикатор успешной смены пароля -->
+                <div id="password-change-success" class="profile-success"></div>
             </div>
             <div class="profile-actions">
-                <button type="button" class="btn">Изменить</button>
+                <button type="button" class="btn" id="password-edit-btn">Изменить</button>
+                <button type="button" class="btn" id="password-save-btn" style="display: none;">Сохранить</button>
+                <button type="button" class="btn" id="password-cancel-btn" style="display: none;">Отмена</button>
             </div>
         </div>
 
