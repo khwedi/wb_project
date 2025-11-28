@@ -11,6 +11,7 @@ from .forms import *
 from .services import *
 from .models import PasswordResetRequest
 from .code_confirm_views import *
+from .messages import AUTH_MESSAGES, EMAIL_CODE_MESSAGES
 
 User = get_user_model()
 
@@ -41,7 +42,7 @@ def signup(request):
 
             verified, verified_email = get_verified_email(request, prefix)
             if not verified or not verified_email or verified_email.lower() != email_from_form:
-                form.add_error("email", "Сначала подтвердите email через код.")
+                form.add_error("email", AUTH_MESSAGES["email_confirmation"])
             else:
                 user = form.save()
                 clear_email_flow(request, prefix)
@@ -108,7 +109,7 @@ def send_code(request, scenario):
       - change_email: требуется авторизация, email НЕ должен быть занят другим пользователем.
     """
     if scenario not in SCENARIO_PREFIXES:
-        return json_error("Неизвестный сценарий отправки кода.")
+        return json_error(EMAIL_CODE_MESSAGES["unknown_scenario_code"])
 
     prefix = SCENARIO_PREFIXES[scenario]
     email_raw = request.POST.get("email", "")
@@ -142,7 +143,7 @@ def send_code(request, scenario):
         return error_resp
 
     if not target_email:
-        return json_error("Не удалось определить email для отправки кода.")
+        return json_error(EMAIL_ERROR_MESSAGES["not_determine_email"])
 
     # 3. Общий сервис: cooldown + генерация кода
     result = start_email_code_flow(request, prefix=prefix, email=target_email)
@@ -190,10 +191,10 @@ def verify_code(request, scenario: str):
       - change_email  -> prefix="change_email"
     """
     if scenario not in SCENARIO_PREFIXES:
-        return json_error("Неизвестный сценарий подтверждения.")
+        return json_error(EMAIL_CODE_MESSAGES["unknown_scenario_confirm"])
 
     if scenario == "change_email" and not request.user.is_authenticated:
-        json_error("Требуется авторизация.")
+        json_error(AUTH_MESSAGES["need_auth"])
 
     prefix = SCENARIO_PREFIXES[scenario]
     code_input = request.POST.get("code", "").strip()
@@ -223,7 +224,7 @@ def confirm_code(request, scenario: str):
             отдельного confirm-шаг не имеет — достаточно verify_code.
     """
     if scenario not in SCENARIO_PREFIXES:
-        return json_error("Неизвестный сценарий подтверждения.")
+        return json_error(EMAIL_CODE_MESSAGES["unknown_scenario_confirm"])
 
     prefix = SCENARIO_PREFIXES[scenario]
 
@@ -234,4 +235,4 @@ def confirm_code(request, scenario: str):
         return confirm_change_email(request, prefix)
 
     # Для signup (и любых других сценариев, где confirm не нужен)
-    return json_error("Для данного сценария отдельный confirm-шаг не требуется.")
+    return json_error(EMAIL_CODE_MESSAGES["not_needed_confirm_step"])

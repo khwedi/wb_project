@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 
 from .email_code_service import *
 from .validators import *
+from .messages import *
 
 User = get_user_model()
 
@@ -53,10 +54,10 @@ def _validate_new_password_pair(password1, password2):
     Возвращает (ok: bool, error_message: str | None).
     """
     if not password1 or not password2:
-        return False, "Введите и подтвердите новый пароль."
+        return False, PASSWORD_ERROR_MESSAGES["confirm_new_password"]
 
     if password1 != password2:
-        return False, "Пароли не совпадают."
+        return False, PASSWORD_ERROR_MESSAGES["mismatch"]
 
     try:
         validate_password(password1)
@@ -71,8 +72,6 @@ def confirm_password_reset(request, prefix) -> JsonResponse:
     """
     Обработчик сценария 'password_reset' для confirm_code.
     """
-    session_invalid_msg = "Сессия восстановления недействительна. Запросите код ещё раз."
-
     password1 = request.POST.get("password1", "") or ""
     password2 = request.POST.get("password2", "") or ""
 
@@ -81,7 +80,7 @@ def confirm_password_reset(request, prefix) -> JsonResponse:
         return json_error(err)
 
     # проверяем, что email и код в сессии валидны
-    email, error_resp = _get_verified_email_or_invalid(request, prefix, session_invalid_msg)
+    email, error_resp = _get_verified_email_or_invalid(request, prefix, EMAIL_CODE_MESSAGES["session_recovery_expired"])
     if error_resp:
         return error_resp
 
@@ -89,7 +88,7 @@ def confirm_password_reset(request, prefix) -> JsonResponse:
     user = User.objects.filter(email__iexact=email).first()
     if not user:
         # между шагами пользователь мог исчезнуть/сменить email
-        return _invalidate_flow_and_error(request, prefix, session_invalid_msg)
+        return _invalidate_flow_and_error(request, prefix, EMAIL_CODE_MESSAGES["session_recovery_expired"])
 
     # меняем пароль
     user.set_password(password1)
@@ -98,25 +97,25 @@ def confirm_password_reset(request, prefix) -> JsonResponse:
     # чистим flow
     clear_email_flow(request, prefix)
 
-    return JsonResponse({"ok": True})
+    return JsonResponse({"ok": True, "message": PASSWORD_SUCCESS_MESSAGES["changed_reset"]})
 
 
 def confirm_change_email(request, prefix) -> JsonResponse:
     """
     Обработчик сценария 'change_email' для confirm_code.
     """
-    session_invalid_msg = "Сессия смены email недействительна. Запросите код ещё раз."
+    session_invalid_msg = EMAIL_CODE_MESSAGES["session_email_expired"]
 
     if not request.user.is_authenticated:
-        return json_error("Требуется авторизация.", status=403)
+        return json_error(AUTH_MESSAGES["need_auth"], status=403)
 
     current_password = request.POST.get("current_password", "")
     if not current_password:
-        return json_error("Введите текущий пароль.")
+        return json_error(PASSWORD_ERROR_MESSAGES["enter_current_password"])
 
     user = request.user
     if not user.check_password(current_password):
-        return json_error("Неверный текущий пароль.")
+        return json_error(PASSWORD_ERROR_MESSAGES["current_wrong"])
 
     # Проверяем, что в сессии есть подтверждённый новый email
     new_email, error_resp = _get_verified_email_or_invalid(request, prefix, session_invalid_msg)
@@ -166,9 +165,7 @@ def resolve_target_email_and_user(request, scenario, email_normalized):
         user = User.objects.filter(email__iexact=email_normalized).first()
         if not user:
             # Теоретически не должно происходить, но пусть будет аккуратный ответ.
-            return None, None, json_error(
-                "Не удалось найти пользователя для восстановления пароля.", status=400
-            )
+            return None, None, json_error(PASSWORD_ERROR_MESSAGES["user_not_found"], status=400)
         target_email = user.email
         user_for_log = user
 
@@ -180,7 +177,7 @@ def resolve_target_email_and_user(request, scenario, email_normalized):
         # Здесь validate_email(type=None) проверил только формат + домен.
         # Дальше проверяем авторизацию и уникальность email относительно текущего пользователя.
         if not request.user.is_authenticated:
-            return None, None, json_error("Требуется авторизация.", status=403)
+            return None, None, json_error(AUTH_MESSAGES["need_auth"], status=403)
 
         email_taken = (
             User.objects
@@ -193,7 +190,7 @@ def resolve_target_email_and_user(request, scenario, email_normalized):
                 {
                     "ok": False,
                     "code": "email_exists",
-                    "error": "Этот email уже используется другим пользователем.",
+                    "error": EMAIL_ERROR_MESSAGES["already_exists"],
                 },
                 status=400,
             )
@@ -202,7 +199,7 @@ def resolve_target_email_and_user(request, scenario, email_normalized):
 
     else:
         # На всякий случай защита, сюда не должны попасть, т.к. scenario уже проверяли выше
-        return None, None, json_error("Неизвестный сценарий отправки кода.", status=400)
+        return None, None, json_error(EMAIL_CODE_MESSAGES["unknown_scenario_code"], status=400)
 
     return target_email, user_for_log, None
 

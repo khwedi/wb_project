@@ -19,7 +19,7 @@
         signup: {
             sendUrl: "/email-code/send/signup/",
             verifyUrl: "/email-code/verify/signup/",
-            confirmUrl: null,  // отдельного confirm-шаг нет
+            confirmUrl: null,
         },
         change_email: {
             sendUrl: "/email-code/send/change_email/",
@@ -71,6 +71,9 @@
     const emailSourceInput = emailSourceId ? document.getElementById(emailSourceId) : null;
     const statusEl = statusElementId ? document.getElementById(statusElementId) : null;
 
+    const passwordResetSuccessEl = document.getElementById("password-reset-success");
+    const emailChangeSuccessEl = document.getElementById("email-change-success");
+
     if (!triggerBtn || !emailModal || !codeModal || !emailForm || !codeForm) {
         return;
     }
@@ -78,7 +81,6 @@
         return;
     }
 
-    // адаптация 3-й модалки под смену email (ввод текущего пароля)
     if (isChangeEmail) {
         if (passwordTitle) {
             passwordTitle.textContent = "Подтверждение пароля";
@@ -204,6 +206,10 @@
 
         if (passwordResetSuccessEl && isPasswordReset) {
             passwordResetSuccessEl.textContent = '';
+        }
+
+        if (emailChangeSuccessEl && isChangeEmail) {
+            emailChangeSuccessEl.textContent = '';
         }
 
         if (emailSourceInput && emailInput) {
@@ -482,7 +488,10 @@
 
                         resetPasswordStep();
                         closeModal(passwordModal);
-                        alert("Email успешно изменён.");
+
+                        if (emailChangeSuccessEl) {
+                            emailChangeSuccessEl.textContent = "Email успешно изменён.";
+                        }
                     })
                     .catch(() => {
                         hideLoading();

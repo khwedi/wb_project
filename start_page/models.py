@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
 
+from .messages import SUPERUSER_MESSAGES
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -25,9 +26,9 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_superuser", True)
 
         if extra_fields.get("is_staff") is not True:
-            raise ValueError("У суперпользователя is_staff должен быть True")
+            raise ValueError(SUPERUSER_MESSAGES["true_is_staff"])
         if extra_fields.get("is_superuser") is not True:
-            raise ValueError("У суперпользователя is_superuser должен быть True")
+            raise ValueError(SUPERUSER_MESSAGES["true_is_superuser"])
 
         return self.create_user(email, username, password, **extra_fields)
 

@@ -41,12 +41,16 @@
             <div class="profile-value">
                 <span id="email-masked">{{ masked_email }}</span>
                 <span id="email-full" style="display: none;">{{ full_email }}</span>
+
+                <!-- Индикатор успешной смены email -->
+                <div id="email-change-success" class="profile-success"></div>
             </div>
             <div class="profile-actions">
                 <button type="button" class="btn" id="email-toggle-btn">Показать</button>
                 <button type="button" class="btn" id="profile-email-change-btn">Изменить</button>
             </div>
         </div>
+
 
         <!-- Пароль -->
         <div class="profile-row">

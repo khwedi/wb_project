@@ -2,7 +2,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from .validators import *
-from .validators import _normalize_email, _check_allowed_domain
+from .messages import PASSWORD_ERROR_MESSAGES
+
 
 
 class RegisterForm(forms.ModelForm):
@@ -71,7 +72,7 @@ class LoginForm(forms.Form):
         password = self.cleaned_data.get("password", "")
         password = password.strip()
         if not password:
-            raise ValidationError("Введите пароль.")
+            raise ValidationError(PASSWORD_ERROR_MESSAGES["empty_password"])
         return password
 
     def clean(self):
@@ -90,7 +91,7 @@ class LoginForm(forms.Form):
 
         user = authenticate(username=email, password=password)
         if user is None:
-            raise ValidationError("Неверный email или пароль.")
+            raise ValidationError(PASSWORD_ERROR_MESSAGES["invalid_credentials"])
 
         self.user = user
         return cleaned_data

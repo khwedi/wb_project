@@ -3,6 +3,7 @@ from django.core.validators import validate_email as django_validate_email
 from django.conf import settings
 
 from .models import CustomUser
+from .messages import EMAIL_ERROR_MESSAGES, PROFILE_ERROR_MESSAGES,PASSWORD_ERROR_MESSAGES
 
 import re
 
@@ -13,13 +14,13 @@ def _normalize_email(email):
     проверить формат.
     """
     if not email:
-        raise ValidationError("Укажите email.")
+        raise ValidationError(EMAIL_ERROR_MESSAGES["empty"])
 
     email_normalized = email.strip().lower()
     try:
         django_validate_email(email_normalized)
     except ValidationError:
-        raise ValidationError("Введите корректный email.")
+        raise ValidationError(EMAIL_ERROR_MESSAGES["invalid_format"])
     return email_normalized
 
 
@@ -28,7 +29,7 @@ def _check_allowed_domain(email_normalized):
     if allowed_domains:
         domain = email_normalized.split("@")[-1]
         if domain not in allowed_domains:
-            raise ValidationError("Регистрация/вход с этого домена email недоступны.")
+            raise ValidationError(EMAIL_ERROR_MESSAGES["domain_not_allowed"])
 
 
 def validate_username(username):
@@ -37,7 +38,7 @@ def validate_username(username):
     """
     username = username.strip()
     if not username:
-        raise ValidationError("Укажите имя пользователя.")
+        raise ValidationError(PROFILE_ERROR_MESSAGES["username_empty"])
     return username
 
 
@@ -73,10 +74,10 @@ def validate_email(email, type):
 
     if type in ("login", "password_reset"):
         if not exists:
-            raise ValidationError("Пользователь с таким email не найден.")
+            raise ValidationError(EMAIL_ERROR_MESSAGES["not_found"])
     elif type == "signup":
         if exists:
-            raise ValidationError("Пользователь с таким email уже зарегистрирован.")
+            raise ValidationError(EMAIL_ERROR_MESSAGES["already_exists"])
 
     return email_normalized
 
@@ -99,7 +100,7 @@ def validate_password(password):
     errors = []
 
     if password is None:
-        raise ValidationError("Введите пароль.")
+        raise ValidationError(PASSWORD_ERROR_MESSAGES["empty_password"])
 
     # убираем пробелы по краям
     password = password.strip()

@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 
 from start_page.validators import validate_username, validate_password
 from start_page.code_confirm_views import json_error
+from start_page.messages import *
 
 
 @login_required
@@ -47,13 +48,13 @@ def change_password_profile(request):
     password2 = request.POST.get("password2", "") or ""
 
     if not current_password or not password1 or not password2:
-        return json_error("Заполните все поля.")
+        return json_error(PASSWORD_ERROR_MESSAGES["empty_fields"])
 
     if not user.check_password(current_password):
-        return json_error("Неверный текущий пароль.")
+        return json_error(PASSWORD_ERROR_MESSAGES["current_wrong"])
 
     if password1 != password2:
-        return json_error("Новые пароли не совпадают.")
+        return json_error(PASSWORD_ERROR_MESSAGES["new_mismatch"])
 
     try:
         validate_password(password1)

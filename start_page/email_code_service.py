@@ -3,13 +3,7 @@ from typing import Tuple, Optional
 
 from django.utils import timezone
 
-
-EMAIL_CODE_MESSAGES = {
-    "cooldown": "Слишком частые запросы кода. Попробуйте через {seconds} секунд.",
-    "session_expired": "Сессия подтверждения истекла. Запросите код ещё раз.",
-    "code_expired": "Срок действия кода истёк. Запросите новый код.",
-    "code_mismatch": "Код не совпадает.",
-}
+from .messages import EMAIL_CODE_MESSAGES
 
 
 def mask_email(email: str) -> str:
@@ -55,7 +49,7 @@ def _get_cooldown_seconds(attempts_so_far: int) -> int:
     return 600
 
 
-def start_email_code_flow(request, prefix: str, email: str) -> dict:
+def start_email_code_flow(request, prefix, email):
     """
     Общая логика "шаг 1": отправка кода на email.
 
@@ -88,7 +82,7 @@ def start_email_code_flow(request, prefix: str, email: str) -> dict:
         elapsed = now_ts - float(last_ts)
         if cooldown > 0 and elapsed < cooldown:
             remaining = int(cooldown - elapsed)
-            msg = EMAIL_CODE_MESSAGES["cooldown"].format(seconds=remaining)
+            msg = EMAIL_CODE_MESSAGES["cooldown_seconds"].format(seconds=remaining)
             return {
                 "ok": False,
                 "code": "cooldown",
@@ -131,7 +125,7 @@ def verify_email_code_flow(request, prefix: str, code_input: str) -> dict:
     if not stored_code or expires_ts is None:
         return {
             "ok": False,
-            "error": EMAIL_CODE_MESSAGES["session_expired"],
+            "error": EMAIL_CODE_MESSAGES["session_confirm_expired"],
         }
 
     now_ts = timezone.now().timestamp()
