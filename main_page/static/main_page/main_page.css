@@ -53,7 +53,73 @@ body {
     display: block;
 }
 
-/* Контент на main_page */
-.main-content {
+/* Общий layout: левое меню + контент */
+.main-layout {
+    display: flex;
+}
+
+/* Левый сайдбар */
+.sidebar {
+    width: 220px;
+    border-right: 1px solid #e5e7eb;
     padding: 20px;
+    box-sizing: border-box;
+    background: #f9fafb;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-item {
+    width: 100%;
+    text-align: left;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.sidebar-item:hover {
+    background: #e5e7eb;
+}
+
+.sidebar-item.active {
+    border-color: #2563eb;
+    background: #eff6ff;
+    font-weight: 500;
+}
+
+/* Контент справа */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Секции контента (Аналитика / Кабинеты) */
+.content-section {
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
+/* Базовая кнопка */
+.btn {
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #f3f4f6;
 }

@@ -1,11 +1,11 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Main page</title>
     <link rel="stylesheet" href="{% static 'main_page/main_page.css' %}">
+    <link rel="stylesheet" href="{% static 'main_page/cabinets.css' %}">
 </head>
 <body>
 <div class="top-bar">
@@ -18,11 +18,157 @@
     </div>
 </div>
 
-<div class="main-content">
-    <h1>Главная страница</h1>
-    <p>Здесь потом будет основная логика приложения.</p>
+<div class="main-layout">
+    <aside class="sidebar">
+        <nav class="sidebar-nav">
+            <button
+                type="button"
+                class="sidebar-item active"
+                data-section="analytics"
+            >
+                Аналитика
+            </button>
+            <button
+                type="button"
+                class="sidebar-item"
+                data-section="cabinets"
+            >
+                Кабинеты
+            </button>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <!-- Раздел Аналитика -->
+        <section
+            id="section-analytics"
+            class="content-section active"
+        >
+            <h1>Главная страница</h1>
+            <p>Раздел «Аналитика».</p>
+            <p>Здесь позже будут графики продаж с Wildberries.</p>
+        </section>
+
+        <!-- Раздел Кабинеты -->
+        <section
+            id="section-cabinets"
+            class="content-section"
+        >
+            <h1>Кабинеты</h1>
+
+            <div class="cabinets-controls">
+                <div class="cabinets-select-wrapper">
+                    <label for="cabinet-select">API ключ:</label>
+                    <select id="cabinet-select" class="cabinets-select"></select>
+                </div>
+
+                <div class="cabinets-buttons">
+                    <button type="button" class="btn" id="cabinet-add-btn">Добавить</button>
+                    <button type="button" class="btn" id="cabinet-show-btn">Показать</button>
+                </div>
+            </div>
+
+            <div id="cabinets-global-error" class="cabinet-error"></div>
+            <div id="cabinets-global-status" class="cabinet-success"></div>
+
+            <div id="cabinets-table-wrapper" class="cabinets-table-wrapper" style="display: none;">
+                <table class="cabinets-table">
+                    <thead>
+                    <tr>
+                        <th>API ключ</th>
+                        <th>Наименование API ключа</th>
+                        <th>Наименование кабинета</th>
+                        <th>Дата создания кабинета</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="cabinets-table-body"></tbody>
+                </table>
+            </div>
+
+            <!-- Модальное окно добавления кабинета -->
+            <div id="cabinet-modal" class="cabinet-modal hidden">
+                <div class="cabinet-modal-backdrop"></div>
+                <div class="cabinet-modal-content">
+                    <h2>Добавить кабинет</h2>
+
+                    <div class="cabinet-modal-field">
+                        <label for="cabinet-api-key-input">API ключ</label>
+                        <textarea
+                            id="cabinet-api-key-input"
+                            class="cabinet-input"
+                            rows="3"
+                        ></textarea>
+                    </div>
+
+                    <div class="cabinet-modal-field">
+                        <label for="cabinet-api-key-name-input">Наименование API ключа</label>
+                        <input
+                            type="text"
+                            id="cabinet-api-key-name-input"
+                            class="cabinet-input"
+                        >
+                    </div>
+
+                    <div id="cabinet-modal-error" class="cabinet-error"></div>
+
+                    <div class="cabinet-modal-actions">
+                        <button type="button" class="btn" id="cabinet-modal-save-btn">Сохранить</button>
+                        <button type="button" class="btn" id="cabinet-modal-cancel-btn">Отмена</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модалка подтверждения синхронизации -->
+            <div id="cabinet-sync-modal" class="cabinet-modal hidden">
+                <div class="cabinet-modal-backdrop"></div>
+                <div class="cabinet-modal-content">
+                    <h2>Синхронизация данных кабинета</h2>
+                    <p id="cabinet-sync-message">
+                        При проверке обнаружено изменение наименования кабинета или даты создания кабинета.
+                        Хотите синхронизировать данные?
+                    </p>
+
+                    <div class="cabinet-modal-actions">
+                        <button type="button" class="btn" id="cabinet-sync-confirm-btn">Да</button>
+                        <button type="button" class="btn" id="cabinet-sync-cancel-btn">Нет</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модалка подтверждения удаления -->
+            <div id="cabinet-delete-modal" class="cabinet-modal hidden">
+                <div class="cabinet-modal-backdrop"></div>
+                <div class="cabinet-modal-content">
+                    <h2>Удаление кабинета</h2>
+                    <p id="cabinet-delete-message">
+                        Вы действительно хотите удалить API ключ?
+                    </p>
+
+                    <div class="cabinet-modal-actions">
+                        <button type="button" class="btn" id="cabinet-delete-confirm-btn">Да</button>
+                        <button type="button" class="btn" id="cabinet-delete-cancel-btn">Нет</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Мини-редактор текстовых полей для кабинетов -->
+            <div id="cabinet-inline-editor" class="cabinet-inline-editor hidden">
+                <textarea
+                    id="cabinet-inline-editor-text"
+                    class="cabinet-inline-editor-text"
+                    rows="4"
+                ></textarea>
+                <div class="cabinet-inline-editor-actions">
+                    <button type="button" class="btn" id="cabinet-inline-editor-save">OK</button>
+                    <button type="button" class="btn" id="cabinet-inline-editor-cancel">Отмена</button>
+                </div>
+            </div>
+        </section>
+    </main>
 </div>
 
 <script src="{% static 'main_page/main_page.js' %}"></script>
+<script src="{% static 'main_page/cabinets.js' %}"></script>
 </body>
 </html>

@@ -1,0 +1,222 @@
+/* ---- Кабинеты ---- */
+
+.cabinets-controls {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.cabinets-select-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cabinets-select {
+    min-width: 260px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    font-size: 14px;
+}
+
+.cabinets-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.cabinets-table-wrapper {
+    margin-top: 10px;
+}
+
+.cabinets-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.cabinets-table th,
+.cabinets-table td {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 8px 10px;
+    text-align: left;
+}
+
+.cabinets-table th {
+    background: #f9fafb;
+    font-weight: 500;
+}
+
+/* Ошибки / статус */
+
+.cabinet-error {
+    color: #b91c1c;
+    font-size: 13px;
+    min-height: 18px;
+    margin-top: 2px;
+}
+
+.cabinet-success {
+    color: #15803d;
+    font-size: 13px;
+    min-height: 18px;
+    margin-top: 2px;
+}
+
+/* Меню с тремя точками в таблице */
+
+.cabinet-row-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.cabinet-menu-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0 6px;
+}
+
+.cabinet-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    min-width: 160px;
+    display: none;
+    z-index: 50;
+}
+
+.cabinet-menu-dropdown button {
+    width: 100%;
+    text-align: left;
+    padding: 6px 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.cabinet-menu-dropdown button:hover {
+    background: #f3f4f6;
+}
+
+.cabinet-row-menu.open .cabinet-menu-dropdown {
+    display: block;
+}
+
+/* Модальные окна (добавить кабинет + синхронизация) */
+
+.cabinet-modal.hidden {
+    display: none;
+}
+
+.cabinet-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+}
+
+.cabinet-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.cabinet-modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.cabinet-modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.cabinet-input {
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
+
+.cabinet-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+/* Сообщения под строкой таблицы (для конкретного API ключа) */
+
+.cabinet-message-row {
+    display: none;
+}
+
+.cabinet-row-message {
+    font-size: 13px;
+    padding: 4px 10px;
+}
+
+.cabinet-row-message-success {
+    color: #15803d;
+}
+
+.cabinet-row-message-error {
+    color: #b91c1c;
+}
+
+/* Мини-редактор текстовых полей */
+
+.cabinet-inline-editor.hidden {
+    display: none;
+}
+
+.cabinet-inline-editor {
+    position: absolute;
+    z-index: 210;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 8px;
+    width: 260px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.cabinet-inline-editor-text {
+    width: 100%;
+    resize: vertical;
+    min-height: 60px;
+    max-height: 200px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.cabinet-inline-editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 4px;
+}

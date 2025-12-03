@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from .validators import *
-from .messages import PASSWORD_ERROR_MESSAGES
+from .messages import PASSWORD_ERROR_MESSAGES, AUTH_MESSAGES
 
 
 
@@ -91,7 +91,7 @@ class LoginForm(forms.Form):
 
         user = authenticate(username=email, password=password)
         if user is None:
-            raise ValidationError(PASSWORD_ERROR_MESSAGES["invalid_credentials"])
+            raise ValidationError(AUTH_MESSAGES["invalid_credentials"])
 
         self.user = user
         return cleaned_data

@@ -67,3 +67,27 @@ SUPERUSER_MESSAGES = {
     "true_is_staff": _("У суперпользователя is_staff должен быть True"),
     "true_is_superuser": _("У суперпользователя is_superuser должен быть True"),
 }
+
+
+WB_API_CABINET = {
+    "bad_connection": _("Не удалось подключиться к Wildberries."),
+    "wb_error": _("API ключ недействителен или Wildberries вернул ошибку."),
+    "wb_bad_answer": _("Некорректный ответ от Wildberries."),
+
+    "fill_api_field": _("Заполните API ключ и его наименование."),
+    "have_api_key_name": _("Наименование API ключа уже используется."),
+    "have_api_key": _("Такой API ключ уже добавлен."),
+
+    "without_id": _("Не передан идентификатор кабинета."),
+    "incorrect_id": _("Некорректный идентификатор кабинета."),
+    "api_active": _("API активен."),
+    "api_active_with_changes": _("API активен, но есть изменения в данных кабинета."),
+    "synced": _("Данные кабинета синхронизированы."),
+
+    "api_key_duplicate": _("Этот API ключ уже используется в другом кабинете."),
+    "api_key_name_required": _("Укажите наименование API ключа."),
+    "cabinet_name_required": _("Укажите наименование кабинета."),
+    "cabinet_date_required": _("Укажите дату создания кабинета."),
+    "cabinet_date_invalid": _("Некорректная дата создания кабинета."),
+    "update_ok": _("Изменения успешно сохранены."),
+}
